@@ -1,4 +1,4 @@
-name: Deploy MultiDocker
+name: Deploy
 on:
   push:
     branches:
@@ -10,18 +10,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-      - run: docker build -t leoldding/react-test -f ./Dockerfile.dev ./
+      - run: docker build -t leoldding/react-test -f Dockerfile.dev .
       - run: docker run -e CI=true leoldding/react-test npm test
- 
-      - run: docker build -t leoldding/multi-client-10-14 ./
-      - run: docker build -t leoldding/multi-nginx-10-14 ./
-      - run: docker build -t leoldding/multi-server-10-14 ./
-      - run: docker build -t leoldding/multi-worker-10-14 ./
- 
-      - run: docker push leoldding/multi-client-10-14
-      - run: docker push leoldding/multi-nginx-10-14
-      - run: docker push leoldding/multi-server-10-14
-      - run: docker push leoldding/multi-worker-10-14
  
       - name: Generate deployment package
         run: zip -r deploy.zip . -x '*.git*'
@@ -33,7 +23,7 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
           application_name: docker-react-training
           environment_name: Dockerreacttraining-env
-          existing_bucket_name: elasticbeanstalk-us-east-1-312810085553
+          existing_bucket_name: elasticbeanstalk-us-east-1-923445559289
           region: us-east-1
           version_label: ${{ github.sha }}
           deployment_package: deploy.zip
